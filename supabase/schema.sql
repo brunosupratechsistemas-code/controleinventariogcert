@@ -97,6 +97,31 @@ create table if not exists conferencias (
 create index if not exists conferencias_ciclo_idx on conferencias(ciclo_mes);
 
 -- ---------------------------------------------------------------------
+-- Solicitações de cadastro (formulário público, sem login)
+-- Qualquer pessoa com o link pode enviar; só a equipe autenticada consegue
+-- LER e aprovar. Aprovar cria o colaborador de verdade e atribui os itens
+-- (isso é feito pelo app, não aqui no banco) — essa tabela é só a "caixa de entrada".
+-- ---------------------------------------------------------------------
+create table if not exists solicitacoes_cadastro (
+  id uuid primary key default gen_random_uuid(),
+  nome text not null,
+  setor text,
+  dispositivos jsonb not null default '[]'::jsonb,
+  status text not null default 'Pendente' check (status in ('Pendente','Aprovado','Rejeitado')),
+  created_at timestamptz not null default now(),
+  processado_em timestamptz
+);
+
+alter table solicitacoes_cadastro enable row level security;
+
+create policy "solicitacoes: envio publico" on solicitacoes_cadastro
+  for insert with check (true);
+create policy "solicitacoes: gestao autenticada" on solicitacoes_cadastro
+  for select using (auth.role() = 'authenticated');
+create policy "solicitacoes: atualizar autenticado" on solicitacoes_cadastro
+  for update using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
+
+-- ---------------------------------------------------------------------
 -- View pública — é isso que a página do QR Code (item.html) lê, sem login.
 -- Só expõe o essencial; nunca e-mail, valor de aquisição ou observações internas.
 -- ---------------------------------------------------------------------

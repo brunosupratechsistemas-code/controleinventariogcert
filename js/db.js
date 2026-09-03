@@ -93,6 +93,23 @@ window.db = (function(){
     // ---------- Página pública (QR Code, sem login) ----------
     getItemPublico(codigo){
       return sb.from('itens_publicos').select('*').eq('codigo', codigo).maybeSingle().then(unwrap);
+    },
+
+    // ---------- Formulário público de cadastro (sem login) ----------
+    getItensDisponiveisPublico(){
+      return sb.from('itens_publicos').select('*').eq('status', 'Em estoque').then(unwrap);
+    },
+    enviarSolicitacaoPublica(dados){
+      return sb.from('solicitacoes_cadastro').insert(dados).select().single().then(unwrap);
+    },
+
+    // ---------- Revisão das solicitações (equipe autenticada) ----------
+    getSolicitacoesPendentes(){
+      return sb.from('solicitacoes_cadastro').select('*').eq('status', 'Pendente').order('created_at').then(unwrap);
+    },
+    atualizarStatusSolicitacao(id, status){
+      return sb.from('solicitacoes_cadastro').update({ status: status, processado_em: new Date().toISOString() }).eq('id', id)
+        .select().single().then(unwrap);
     }
   };
 })();

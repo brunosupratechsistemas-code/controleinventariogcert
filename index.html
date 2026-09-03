@@ -46,6 +46,7 @@
 
   <div class="tabs">
     <div class="tab active" data-tab="dashboard">Dashboard</div>
+    <div class="tab" data-tab="cadastro">Cadastro Rápido</div>
     <div class="tab" data-tab="colaboradores">Colaboradores</div>
     <div class="tab" data-tab="estoque">Estoque</div>
     <div class="tab" data-tab="conferencias">Conferências</div>
@@ -56,6 +57,40 @@
   <!-- DASHBOARD -->
   <div class="view" id="view-dashboard">
     <div id="dashboardContent"></div>
+  </div>
+
+  <!-- CADASTRO RÁPIDO -->
+  <div class="view" id="view-cadastro" style="display:none;">
+    <div class="panel">
+      <h2>Cadastro rápido de colaborador + dispositivos</h2>
+      <p class="hint">Cadastre um colaborador e já atribua os dispositivos dele em um só passo — igual fazer manualmente em Colaboradores + Estoque, só que de uma vez.</p>
+      <form id="cadastroForm">
+        <div class="form-grid">
+          <div class="field-group"><label for="cad_nome">Nome do colaborador *</label><input type="text" id="cad_nome" required placeholder="Ex.: Maria Souza"></div>
+          <div class="field-group"><label for="cad_setor">Setor</label><input type="text" id="cad_setor" placeholder="Ex.: Financeiro"></div>
+        </div>
+        <div class="divider"></div>
+        <label>Dispositivos</label>
+        <div class="device-add-row">
+          <select class="field" id="cad_deviceSelect"></select>
+          <button type="button" class="btn ghost" id="cad_addDeviceBtn">+ Adicionar</button>
+        </div>
+        <div id="cad_deviceList" class="device-pick-list"></div>
+        <div class="form-actions">
+          <button type="submit" class="btn amber">Cadastrar colaborador e atribuir dispositivos</button>
+        </div>
+      </form>
+      <div id="cadastroResumo"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Solicitações recebidas pelo formulário público</h2>
+      <p class="hint">
+        Link para compartilhar com os colaboradores (sem necessidade de login):<br>
+        <a id="linkFormularioPublico" href="solicitacao.html" target="_blank" class="mono"></a>
+      </p>
+      <div id="solicitacoesContent"></div>
+    </div>
   </div>
 
   <!-- COLABORADORES -->
@@ -164,6 +199,7 @@
 <script src="js/utils.js"></script>
 <script src="js/db.js"></script>
 <script src="js/ui-dashboard.js"></script>
+<script src="js/ui-cadastro.js"></script>
 <script src="js/ui-colaboradores.js"></script>
 <script src="js/ui-estoque.js"></script>
 <script src="js/ui-conferencias.js"></script>

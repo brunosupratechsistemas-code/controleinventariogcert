@@ -7,13 +7,28 @@ QR Code para imprimir e colar nos equipamentos, e um histórico de conferências
 Frontend estático (HTML/CSS/JS puro, sem build) + [Supabase](https://supabase.com) (Postgres
 gerenciado, API e autenticação). Feito para rodar no GitHub Pages.
 
-## Formulário mensal (ClickUp)
+## Formulário público de cadastro (`solicitacao.html`)
 
-O preenchimento mensal de conferência é feito pelos colaboradores em um **formulário do
-ClickUp** (fora deste sistema). A aba **Conferências** aqui dentro guarda o histórico dessas
-conferências (uma linha por item/colaborador/mês) e já está pronta para receber, no futuro,
-os dados sincronizados automaticamente do ClickUp — enquanto isso não está implementado, dá
-pra registrar manualmente por aqui mesmo. Veja "Próximos passos" no final deste arquivo.
+Página separada, **sem necessidade de login**, para o colaborador informar nome, setor e os
+equipamentos que estão com ele (por categoria + descrição — se a categoria não existir ainda,
+ele escolhe "Outro" e descreve do jeito dele). O link para compartilhar aparece na aba
+**Cadastro Rápido** do painel.
+
+Isso não grava direto nos cadastros oficiais — cai como uma **solicitação pendente**, visível
+só para quem está logado, na mesma aba **Cadastro Rápido**. Um clique em **Aprovar** cria o
+colaborador (se ainda não existir) e os itens novos, já com QR Code, exatamente como se tivesse
+sido cadastrado manualmente. Isso existe por segurança: sem esse filtro, qualquer pessoa com o
+link poderia inserir dados falsos direto no patrimônio.
+
+## Formulário mensal de conferência (ClickUp)
+
+O preenchimento mensal de conferência (auditoria do que cada um ainda tem em mãos) é feito
+pelos colaboradores em um **formulário do ClickUp** (fora deste sistema) — diferente do
+formulário de cadastro acima, que é sobre equipamento novo. A aba **Conferências** aqui dentro
+guarda o histórico dessas conferências (uma linha por item/colaborador/mês) e já está pronta
+para receber, no futuro, os dados sincronizados automaticamente do ClickUp — enquanto isso não
+está implementado, dá pra registrar manualmente por aqui mesmo. Veja "Próximos passos" no final
+deste arquivo.
 
 ## 1. Criar o backend no Supabase
 
@@ -65,15 +80,17 @@ Depois acesse `http://localhost:8080` (ou a porta indicada) no navegador.
 ## Estrutura
 
 ```
-index.html            painel interno (login + Dashboard, Colaboradores, Estoque, Conferências, Scanner, Etiquetas)
-item.html             página pública do item — é para onde o QR Code aponta, não exige login
+index.html               painel interno (login + Dashboard, Cadastro Rápido, Colaboradores, Estoque, Conferências, Scanner, Etiquetas)
+item.html                página pública do item — é para onde o QR Code aponta, não exige login
+solicitacao.html         formulário público de cadastro — não exige login
 css/style.css
-js/supabaseClient.js  configuração da conexão com o Supabase (preencher com suas chaves)
-js/db.js              todas as consultas ao banco, reaproveitadas pelas telas
-js/auth.js            login/logout da equipe
-js/ui-*.js            uma tela por arquivo (dashboard, colaboradores, estoque, conferências, etiquetas, scanner)
-js/item-publico.js    lógica da item.html
-supabase/schema.sql   script único que cria todo o banco de dados
+js/supabaseClient.js     configuração da conexão com o Supabase (preencher com suas chaves)
+js/db.js                 todas as consultas ao banco, reaproveitadas pelas telas
+js/auth.js               login/logout da equipe
+js/ui-*.js               uma tela por arquivo (dashboard, cadastro rápido, colaboradores, estoque, conferências, etiquetas, scanner)
+js/item-publico.js       lógica da item.html
+js/solicitacao-publica.js lógica da solicitacao.html
+supabase/schema.sql      script único que cria todo o banco de dados
 ```
 
 ## Próximos passos: integração com o ClickUp

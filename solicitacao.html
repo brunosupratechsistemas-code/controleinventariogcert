@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastro de Equipamentos · GCERT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="login-wrap" style="align-items:flex-start; padding-top:40px;">
+    <div class="login-card" style="max-width:480px;">
+      <img class="login-logo" src="img/logo-gcert.png" alt="GCERT">
+      <h1 style="text-align:center;">Solicitação de cadastro</h1>
+      <div class="sub">Preencha seu nome, setor e os equipamentos que estão com você. Nossa equipe confirma o cadastro no sistema em seguida.</div>
+
+      <div id="formArea">
+        <form id="solicitacaoForm">
+          <div class="field-group">
+            <label for="s_nome">Seu nome *</label>
+            <input type="text" id="s_nome" required placeholder="Ex.: Maria Souza">
+          </div>
+          <div class="field-group">
+            <label for="s_setor">Setor</label>
+            <input type="text" id="s_setor" placeholder="Ex.: Financeiro">
+          </div>
+          <div class="divider"></div>
+          <label>Equipamentos com você</label>
+          <div class="form-grid" style="margin-bottom:8px;">
+            <div class="field-group"><select class="field" id="s_categoria"></select></div>
+            <div class="field-group" id="s_categoriaOutroWrap" hidden><input type="text" id="s_categoriaOutro" placeholder="Qual categoria?"></div>
+          </div>
+          <div class="device-add-row">
+            <input type="text" id="s_descricao" placeholder="Descrição do equipamento (ex.: Notebook Dell cinza, série ABC123)">
+            <button type="button" class="btn ghost" id="s_addDeviceBtn">+ Adicionar</button>
+          </div>
+          <div id="s_deviceList" class="device-pick-list"></div>
+          <div class="hint" style="margin-top:10px;">Não sabe a categoria certa? Escolha "Outro" e descreva do seu jeito — a TI ajusta depois.</div>
+          <div class="form-actions">
+            <button type="submit" class="btn amber" style="width:100%;">Enviar solicitação</button>
+          </div>
+        </form>
+      </div>
+      <div id="okArea" hidden>
+        <div class="empty">
+          <div class="big">✅</div>
+          <p><strong>Solicitação enviada!</strong></p>
+          <p class="hint">Nossa equipe vai confirmar seu cadastro em breve.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/solicitacao-publica.js"></script>
+</body>
+</html>
