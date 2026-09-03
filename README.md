@@ -36,7 +36,9 @@ deste arquivo.
    senha do banco).
 2. Abra **SQL Editor > New query**, cole todo o conteúdo de [`supabase/schema.sql`](supabase/schema.sql)
    e clique em **Run**. Isso cria as tabelas, a view pública usada pelo QR Code, as categorias
-   iniciais e as regras de RLS (segurança por linha).
+   iniciais e as regras de RLS (segurança por linha). É seguro rodar esse arquivo de novo sempre
+   que ele for atualizado (toda tabela e política usa `if not exists`/`drop ... if exists` antes
+   de recriar) — não duplica nada nem apaga dados existentes.
 3. Em **Project Settings > API**, copie a **Project URL** e a chave **anon public**.
 4. Abra [`js/supabaseClient.js`](js/supabaseClient.js) e substitua:
    ```js

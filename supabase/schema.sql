@@ -114,10 +114,13 @@ create table if not exists solicitacoes_cadastro (
 
 alter table solicitacoes_cadastro enable row level security;
 
+drop policy if exists "solicitacoes: envio publico" on solicitacoes_cadastro;
 create policy "solicitacoes: envio publico" on solicitacoes_cadastro
   for insert with check (true);
+drop policy if exists "solicitacoes: gestao autenticada" on solicitacoes_cadastro;
 create policy "solicitacoes: gestao autenticada" on solicitacoes_cadastro
   for select using (auth.role() = 'authenticated');
+drop policy if exists "solicitacoes: atualizar autenticado" on solicitacoes_cadastro;
 create policy "solicitacoes: atualizar autenticado" on solicitacoes_cadastro
   for update using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
 
@@ -149,17 +152,22 @@ alter table colaboradores enable row level security;
 alter table itens enable row level security;
 alter table conferencias enable row level security;
 
+drop policy if exists "categorias: leitura publica" on categorias;
 create policy "categorias: leitura publica" on categorias
   for select using (true);
+drop policy if exists "categorias: escrita autenticada" on categorias;
 create policy "categorias: escrita autenticada" on categorias
   for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
 
+drop policy if exists "colaboradores: acesso autenticado" on colaboradores;
 create policy "colaboradores: acesso autenticado" on colaboradores
   for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
 
+drop policy if exists "itens: acesso autenticado" on itens;
 create policy "itens: acesso autenticado" on itens
   for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
 
+drop policy if exists "conferencias: acesso autenticado" on conferencias;
 create policy "conferencias: acesso autenticado" on conferencias
   for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
 
