@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCERT · Controle de Inventário</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-card">
+    <img class="login-logo" src="img/logo-gcert.png" alt="GCERT">
+    <div class="sub">Controle de Inventário · acesso da equipe</div>
+    <form id="loginForm">
+      <div class="field-group"><label for="loginEmail">E-mail</label><input type="email" id="loginEmail" required></div>
+      <div class="field-group"><label for="loginSenha">Senha</label><input type="password" id="loginSenha" required></div>
+      <button type="submit" class="btn amber" style="width:100%;">Entrar</button>
+      <div class="login-error" id="loginError"></div>
+    </form>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="appWrap" hidden>
+
+  <div class="header-tag">
+    <div>
+      <div class="eyebrow">GCERT · uso interno</div>
+      <h1>Controle de Inventário</h1>
+      <div class="sub">Colaboradores, estoque por categoria, etiquetas com QR Code e conferências mensais.</div>
+    </div>
+    <div class="who">
+      <div id="userEmail"></div>
+      <button class="btn ghost small" id="logoutBtn">Sair</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="dashboard">Dashboard</div>
+    <div class="tab" data-tab="colaboradores">Colaboradores</div>
+    <div class="tab" data-tab="estoque">Estoque</div>
+    <div class="tab" data-tab="conferencias">Conferências</div>
+    <div class="tab" data-tab="scanner">Scanner</div>
+    <div class="tab" data-tab="etiquetas">Etiquetas p/ impressão</div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="view" id="view-dashboard">
+    <div id="dashboardContent"></div>
+  </div>
+
+  <!-- COLABORADORES -->
+  <div class="view" id="view-colaboradores" style="display:none;">
+    <div class="panel">
+      <h2>Novo colaborador</h2>
+      <form id="novoColabForm">
+        <div class="form-grid">
+          <div class="field-group full"><label for="nc_nome">Nome *</label><input type="text" id="nc_nome" required placeholder="Ex.: Maria Souza"></div>
+          <div class="field-group"><label for="nc_email">E-mail</label><input type="text" id="nc_email" placeholder="maria@gcert.com.br"></div>
+          <div class="field-group"><label for="nc_setor">Setor</label><input type="text" id="nc_setor" placeholder="Ex.: Financeiro"></div>
+        </div>
+        <div class="form-actions"><button type="submit" class="btn amber">Cadastrar colaborador</button></div>
+      </form>
+    </div>
+    <div class="panel">
+      <div class="toolbar"><input type="text" id="colabSearch" placeholder="Buscar por nome, e-mail ou setor..."></div>
+      <div id="colaboradoresContent"></div>
+    </div>
+  </div>
+
+  <!-- ESTOQUE -->
+  <div class="view" id="view-estoque" style="display:none;">
+    <div class="panel">
+      <h2>Cadastrar novo item</h2>
+      <form id="novoItemForm">
+        <div class="form-grid">
+          <div class="field-group full"><label for="ni_nome">Nome do item *</label><input type="text" id="ni_nome" required placeholder="Ex.: Notebook Dell Latitude 5440"></div>
+          <div class="field-group">
+            <label for="ni_categoria">Categoria *</label>
+            <select class="field" id="ni_categoria"></select>
+            <div class="hint"><a href="#" id="novaCategoriaBtn">+ criar nova categoria</a></div>
+          </div>
+          <div class="field-group"><label for="ni_status">Status</label><select class="field" id="ni_status"></select></div>
+          <div class="field-group"><label for="ni_marca">Marca / modelo</label><input type="text" id="ni_marca" placeholder="Ex.: Dell Latitude 5440"></div>
+          <div class="field-group"><label for="ni_serie">Nº de série</label><input type="text" id="ni_serie"></div>
+          <div class="field-group"><label for="ni_colaborador">Atribuir a</label><select class="field" id="ni_colaborador"></select></div>
+          <div class="field-group"><label for="ni_data">Data de aquisição</label><input type="date" id="ni_data"></div>
+          <div class="field-group full"><label for="ni_obs">Observações</label><textarea id="ni_obs" placeholder="Nota fiscal, condição..."></textarea></div>
+        </div>
+        <div class="form-actions"><button type="submit" class="btn amber">Salvar item e gerar etiqueta</button></div>
+      </form>
+      <div id="newItemTagPreview"></div>
+    </div>
+    <div class="panel">
+      <div class="toolbar">
+        <input type="text" id="estSearch" placeholder="Buscar por nome, código, série ou responsável...">
+        <select id="estCategoriaFilter"></select>
+        <select id="estStatusFilter"></select>
+      </div>
+      <div id="estoqueContent"></div>
+    </div>
+  </div>
+
+  <!-- CONFERÊNCIAS -->
+  <div class="view" id="view-conferencias" style="display:none;">
+    <div class="panel">
+      <h2>Conferência mensal</h2>
+      <p class="hint">O formulário que os colaboradores preenchem hoje é no ClickUp. Aqui fica o histórico da conferência — enquanto a integração automática não está pronta, registre manualmente; "Nova conferência" gera um item pendente para cada equipamento em uso no mês escolhido.</p>
+      <div class="toolbar">
+        <input type="month" id="confMes">
+        <button class="btn amber" id="novoCicloBtn">Nova conferência</button>
+      </div>
+      <div id="conferenciasContent"></div>
+    </div>
+  </div>
+
+  <!-- SCANNER -->
+  <div class="view" id="view-scanner" style="display:none;">
+    <div class="panel">
+      <h2>Buscar item pela câmera</h2>
+      <div class="scanner-wrap">
+        <video id="scanVideo" playsinline muted></video>
+        <div class="viewfinder">
+          <div class="corner tl"></div><div class="corner tr"></div>
+          <div class="corner bl"></div><div class="corner br"></div>
+        </div>
+      </div>
+      <div class="scan-status" id="scanStatus">Câmera desligada</div>
+      <div class="scan-controls">
+        <button class="btn amber" id="startScanBtn">Ativar câmera</button>
+        <button class="btn ghost" id="stopScanBtn" style="display:none;">Parar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETIQUETAS -->
+  <div class="view" id="view-etiquetas" style="display:none;">
+    <div class="panel">
+      <h2>Etiquetas para impressão</h2>
+      <p class="hint">Selecione os itens e imprima etiquetas com QR Code. Ao escanear com qualquer câmera de celular, abre a página pública do item.</p>
+      <div class="toolbar">
+        <button class="btn ghost" id="selectAllBtn">Selecionar todos</button>
+        <button class="btn ghost" id="selectNoneBtn">Limpar seleção</button>
+        <button class="btn amber" id="printBtn">Imprimir selecionadas</button>
+      </div>
+      <div id="etiquetasContent"></div>
+    </div>
+  </div>
+
+</div>
+
+<div id="print-area"><div class="print-grid" id="printGrid"></div></div>
+
+<script src="js/supabaseClient.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/db.js"></script>
+<script src="js/ui-dashboard.js"></script>
+<script src="js/ui-colaboradores.js"></script>
+<script src="js/ui-estoque.js"></script>
+<script src="js/ui-conferencias.js"></script>
+<script src="js/ui-etiquetas.js"></script>
+<script src="js/ui-scanner.js"></script>
+<script src="js/app.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>
