@@ -69,7 +69,7 @@ window.uiEtiquetas = (function(){
       });
       chosen.forEach(function(item){
         var box = document.getElementById('qr-print-'+item.id);
-        if(box) U.renderQrInto(box, U.itemPublicUrl(item.codigo), 70);
+        if(box) U.renderQrInto(box, U.itemPublicUrl(item.codigo), 84);
       });
       setTimeout(function(){ window.print(); }, 150);
     });
