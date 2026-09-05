@@ -95,19 +95,17 @@ js/solicitacao-publica.js lógica da solicitacao.html
 supabase/schema.sql      script único que cria todo o banco de dados
 ```
 
-## Próximos passos: integração com o ClickUp
+## Integração com o ClickUp (conferência mensal automática)
 
-Ainda não implementado — fica documentado aqui como próximo passo, para depois que o sistema
-em si estiver validado no dia a dia:
+Já implementada — o guia completo de configuração (o que criar no ClickUp, automação, deploy da
+função) está em [`CLICKUP_INTEGRACAO.md`](CLICKUP_INTEGRACAO.md). Resumo: colaborador preenche
+um formulário do ClickUp com e-mail + códigos dos equipamentos, uma automação chama a função em
+[`supabase/functions/clickup-webhook`](supabase/functions/clickup-webhook/index.ts), que compara
+com o que está registrado e grava direto na aba **Conferências** (`origem = 'clickup'`).
 
-- **Formulário → Sistema**: quando um colaborador responde o formulário mensal no ClickUp, usar
-  um **webhook do ClickUp** (dispara em criação/edição de task) apontando para uma
-  [Supabase Edge Function](https://supabase.com/docs/guides/functions), que recebe o payload,
-  identifica o item pelo código (campo customizado no ClickUp) e grava/atualiza a linha
-  correspondente em `conferencias` com `origem = 'clickup'` e `clickup_task_id` preenchido.
-- **Item novo → ClickUp**: ao cadastrar um item novo no sistema (aba Estoque), chamar a API do
-  ClickUp para criar a task correspondente na lista de patrimônio, guardando o `clickup_task_id`
-  de volta no item (precisa de uma coluna nova em `itens` quando for implementar).
-- Essas chamadas para a API do ClickUp exigem uma chave de API que não pode ficar exposta no
-  frontend — por isso elas devem rodar em uma Edge Function do Supabase (ou outro backend), nunca
-  direto no navegador.
+## Próximos passos
+
+- **Item novo → ClickUp**: ao cadastrar um item novo no sistema (aba Estoque ou Cadastro Rápido),
+  chamar a API do ClickUp para criar a task correspondente na lista de patrimônio, guardando o
+  `clickup_task_id` de volta no item (precisa de uma coluna nova em `itens` quando for
+  implementar). Ainda não feito.
