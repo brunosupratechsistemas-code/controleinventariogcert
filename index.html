@@ -10,7 +10,6 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/png" href="img/favicon.png">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
@@ -36,7 +35,7 @@
     <div>
       <div class="eyebrow">GCERT · uso interno</div>
       <h1>Controle de Inventário</h1>
-      <div class="sub">Colaboradores, estoque por categoria, etiquetas com QR Code e conferências mensais.</div>
+      <div class="sub">Colaboradores, estoque por categoria e etiquetas com QR Code.</div>
     </div>
     <div class="who">
       <div id="userEmail"></div>
@@ -49,8 +48,6 @@
     <div class="tab" data-tab="cadastro">Cadastro Rápido</div>
     <div class="tab" data-tab="colaboradores">Colaboradores</div>
     <div class="tab" data-tab="estoque">Estoque</div>
-    <div class="tab" data-tab="conferencias">Conferências</div>
-    <div class="tab" data-tab="scanner">Scanner</div>
     <div class="tab" data-tab="etiquetas">Etiquetas p/ impressão</div>
   </div>
 
@@ -145,38 +142,6 @@
     </div>
   </div>
 
-  <!-- CONFERÊNCIAS -->
-  <div class="view" id="view-conferencias" style="display:none;">
-    <div class="panel">
-      <h2>Conferência mensal</h2>
-      <p class="hint">O formulário que os colaboradores preenchem hoje é no ClickUp. Aqui fica o histórico da conferência — enquanto a integração automática não está pronta, registre manualmente; "Nova conferência" gera um item pendente para cada equipamento em uso no mês escolhido.</p>
-      <div class="toolbar">
-        <input type="month" id="confMes">
-        <button class="btn amber" id="novoCicloBtn">Nova conferência</button>
-      </div>
-      <div id="conferenciasContent"></div>
-    </div>
-  </div>
-
-  <!-- SCANNER -->
-  <div class="view" id="view-scanner" style="display:none;">
-    <div class="panel">
-      <h2>Buscar item pela câmera</h2>
-      <div class="scanner-wrap">
-        <video id="scanVideo" playsinline muted></video>
-        <div class="viewfinder">
-          <div class="corner tl"></div><div class="corner tr"></div>
-          <div class="corner bl"></div><div class="corner br"></div>
-        </div>
-      </div>
-      <div class="scan-status" id="scanStatus">Câmera desligada</div>
-      <div class="scan-controls">
-        <button class="btn amber" id="startScanBtn">Ativar câmera</button>
-        <button class="btn ghost" id="stopScanBtn" style="display:none;">Parar</button>
-      </div>
-    </div>
-  </div>
-
   <!-- ETIQUETAS -->
   <div class="view" id="view-etiquetas" style="display:none;">
     <div class="panel">
@@ -202,9 +167,7 @@
 <script src="js/ui-cadastro.js"></script>
 <script src="js/ui-colaboradores.js"></script>
 <script src="js/ui-estoque.js"></script>
-<script src="js/ui-conferencias.js"></script>
 <script src="js/ui-etiquetas.js"></script>
-<script src="js/ui-scanner.js"></script>
 <script src="js/app.js"></script>
 <script src="js/auth.js"></script>
 </body>

@@ -2,7 +2,7 @@
 
 Sistema interno para controlar o patrimônio de TI da GCERT (computadores, fones, celulares,
 carregadores etc.): cadastro de colaboradores, estoque separado por categoria, etiquetas com
-QR Code para imprimir e colar nos equipamentos, e um histórico de conferências mensais.
+QR Code para imprimir e colar nos equipamentos, e conferência mensal automática via ClickUp.
 
 Frontend estático (HTML/CSS/JS puro, sem build) + [Supabase](https://supabase.com) (Postgres
 gerenciado, API e autenticação). Feito para rodar no GitHub Pages.
@@ -24,11 +24,9 @@ link poderia inserir dados falsos direto no patrimônio.
 
 O preenchimento mensal de conferência (auditoria do que cada um ainda tem em mãos) é feito
 pelos colaboradores em um **formulário do ClickUp** (fora deste sistema) — diferente do
-formulário de cadastro acima, que é sobre equipamento novo. A aba **Conferências** aqui dentro
-guarda o histórico dessas conferências (uma linha por item/colaborador/mês) e já está pronta
-para receber, no futuro, os dados sincronizados automaticamente do ClickUp — enquanto isso não
-está implementado, dá pra registrar manualmente por aqui mesmo. Veja "Próximos passos" no final
-deste arquivo.
+formulário de cadastro acima, que é sobre equipamento novo. O resultado dessa conferência é
+gravado direto no banco (tabela `conferencias`) pela integração descrita mais abaixo — não tem
+tela própria no painel, é consultado direto no Supabase ou no próprio ClickUp.
 
 ## 1. Criar o backend no Supabase
 
@@ -82,17 +80,18 @@ Depois acesse `http://localhost:8080` (ou a porta indicada) no navegador.
 ## Estrutura
 
 ```
-index.html               painel interno (login + Dashboard, Cadastro Rápido, Colaboradores, Estoque, Conferências, Scanner, Etiquetas)
-item.html                página pública do item — é para onde o QR Code aponta, não exige login
-solicitacao.html         formulário público de cadastro — não exige login
+index.html                painel interno (login + Dashboard, Cadastro Rápido, Colaboradores, Estoque, Etiquetas)
+item.html                 página pública do item — é para onde o QR Code aponta, não exige login
+solicitacao.html          formulário público de cadastro — não exige login
 css/style.css
-js/supabaseClient.js     configuração da conexão com o Supabase (preencher com suas chaves)
-js/db.js                 todas as consultas ao banco, reaproveitadas pelas telas
-js/auth.js               login/logout da equipe
-js/ui-*.js               uma tela por arquivo (dashboard, cadastro rápido, colaboradores, estoque, conferências, etiquetas, scanner)
-js/item-publico.js       lógica da item.html
+js/supabaseClient.js      configuração da conexão com o Supabase (preencher com suas chaves)
+js/db.js                  todas as consultas ao banco, reaproveitadas pelas telas
+js/auth.js                login/logout da equipe
+js/ui-*.js                uma tela por arquivo (dashboard, cadastro rápido, colaboradores, estoque, etiquetas)
+js/item-publico.js        lógica da item.html
 js/solicitacao-publica.js lógica da solicitacao.html
-supabase/schema.sql      script único que cria todo o banco de dados
+supabase/schema.sql       script único que cria todo o banco de dados
+supabase/functions/       Edge Functions (integração com o ClickUp)
 ```
 
 ## Integração com o ClickUp (conferência mensal automática)
@@ -101,7 +100,7 @@ Já implementada — o guia completo de configuração (o que criar no ClickUp, 
 função) está em [`CLICKUP_INTEGRACAO.md`](CLICKUP_INTEGRACAO.md). Resumo: colaborador preenche
 um formulário do ClickUp com e-mail + códigos dos equipamentos, uma automação chama a função em
 [`supabase/functions/clickup-webhook`](supabase/functions/clickup-webhook/index.ts), que compara
-com o que está registrado e grava direto na aba **Conferências** (`origem = 'clickup'`).
+com o que está registrado e grava direto na tabela `conferencias` (`origem = 'clickup'`).
 
 ## Próximos passos
 

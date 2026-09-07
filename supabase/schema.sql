@@ -77,7 +77,10 @@ create trigger itens_set_updated_at before update on itens
 
 -- ---------------------------------------------------------------------
 -- Conferências (ciclo mensal de auditoria do patrimônio)
--- origem = 'manual' (preenchido aqui no sistema) ou 'clickup' (fase 2: sincronizado do formulário do ClickUp)
+-- Não tem tela própria no painel — é alimentada automaticamente pela integração
+-- com o ClickUp (ver CLICKUP_INTEGRACAO.md e supabase/functions/clickup-webhook).
+-- origem = 'clickup' sempre, na prática; 'manual' fica disponível só como reserva
+-- caso alguém precise inserir uma linha na mão via SQL.
 -- ---------------------------------------------------------------------
 create table if not exists conferencias (
   id uuid primary key default gen_random_uuid(),

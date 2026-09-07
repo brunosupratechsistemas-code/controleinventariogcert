@@ -3,7 +3,7 @@ window.state = { categorias: [], colaboradores: [], itens: [], loaded: false };
 window.app = (function(){
   "use strict";
   var U = utils;
-  var views = { dashboard:'view-dashboard', cadastro:'view-cadastro', colaboradores:'view-colaboradores', estoque:'view-estoque', conferencias:'view-conferencias', scanner:'view-scanner', etiquetas:'view-etiquetas' };
+  var views = { dashboard:'view-dashboard', cadastro:'view-cadastro', colaboradores:'view-colaboradores', estoque:'view-estoque', etiquetas:'view-etiquetas' };
   var initialized = false;
 
   function activeTab(){
@@ -17,7 +17,6 @@ window.app = (function(){
     if(tab === 'cadastro') uiCadastro.render();
     if(tab === 'colaboradores') uiColaboradores.render();
     if(tab === 'estoque') uiEstoque.render();
-    if(tab === 'conferencias') uiConferencias.load();
     if(tab === 'etiquetas') uiEtiquetas.render();
   }
 
@@ -48,7 +47,6 @@ window.app = (function(){
         Object.keys(views).forEach(function(k){
           document.getElementById(views[k]).style.display = (k === t.dataset.tab) ? '' : 'none';
         });
-        if(t.dataset.tab !== 'scanner') uiScanner.stop();
         renderActive();
       });
     });
@@ -61,9 +59,7 @@ window.app = (function(){
     uiCadastro.initForm();
     uiColaboradores.initForm();
     uiEstoque.initForm();
-    uiConferencias.initForm();
     uiEtiquetas.initForm();
-    uiScanner.initForm();
 
     loadAll().then(function(){
       uiEstoque.fillStaticSelectsOnce();
