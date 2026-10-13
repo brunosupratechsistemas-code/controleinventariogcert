@@ -2,6 +2,10 @@ window.uiEtiquetas = (function(){
   "use strict";
   var U = utils;
   var selected = new Set();
+  var LOGOS = {
+    gcert: 'img/logo-gcert.png',
+    supratech: 'img/logo-supratech.png'
+  };
 
   function render(){
     var el = document.getElementById('etiquetasContent');
@@ -39,6 +43,15 @@ window.uiEtiquetas = (function(){
   }
 
   function initForm(){
+    var logoSelect = document.getElementById('etqLogoSelect');
+    try{
+      var logoSalvo = localStorage.getItem('etqLogo');
+      if(logoSalvo && LOGOS[logoSalvo]) logoSelect.value = logoSalvo;
+    }catch(e){ /* localStorage indisponível, segue com o padrão */ }
+    logoSelect.addEventListener('change', function(){
+      try{ localStorage.setItem('etqLogo', logoSelect.value); }catch(e){ /* ignora */ }
+    });
+
     document.getElementById('selectAllBtn').addEventListener('click', function(){
       state.itens.forEach(function(i){ selected.add(i.id); });
       render();
@@ -50,13 +63,15 @@ window.uiEtiquetas = (function(){
     document.getElementById('printBtn').addEventListener('click', function(){
       var chosen = state.itens.filter(function(i){ return selected.has(i.id); });
       if(chosen.length === 0) chosen = state.itens.slice();
+      var logoKey = document.getElementById('etqLogoSelect').value;
+      var logoSrc = LOGOS[logoKey] || LOGOS.gcert;
       var printGrid = document.getElementById('printGrid');
       printGrid.innerHTML = '';
       chosen.forEach(function(item){
         var tag = document.createElement('div');
         tag.className = 'print-tag';
         tag.innerHTML =
-          '<div class="head"><img src="img/favicon.png" alt=""><span>Patrimônio · GCERT</span></div>' +
+          '<div class="head"><img src="'+logoSrc+'" alt=""><span>Patrimônio</span></div>' +
           '<div class="body">' +
             '<div class="qr" id="qr-print-'+item.id+'"></div>' +
             '<div class="txt">' +
