@@ -102,9 +102,18 @@ um formulário do ClickUp com e-mail + códigos dos equipamentos, uma automaçã
 [`supabase/functions/clickup-webhook`](supabase/functions/clickup-webhook/index.ts), que compara
 com o que está registrado e grava direto na tabela `conferencias` (`origem = 'clickup'`).
 
+## Sincronização ClickUp → Estoque/Etiquetas (cadastro automático)
+
+Quando um equipamento é cadastrado pelo formulário de Cadastro do ClickUp (ou tem o status/
+colaborador responsável alterado lá), ele aparece automaticamente aqui em **Estoque** e
+**Etiquetas** — criado/atualizado pelo mesmo Google Apps Script que já automatiza o ClickUp, via
+a função [`supabase/functions/clickup-sync-item`](supabase/functions/clickup-sync-item/index.ts).
+Guia completo de configuração em
+[`CLICKUP_SYNC_ETIQUETAS.md`](CLICKUP_SYNC_ETIQUETAS.md).
+
 ## Próximos passos
 
-- **Item novo → ClickUp**: ao cadastrar um item novo no sistema (aba Estoque ou Cadastro Rápido),
-  chamar a API do ClickUp para criar a task correspondente na lista de patrimônio, guardando o
-  `clickup_task_id` de volta no item (precisa de uma coluna nova em `itens` quando for
-  implementar). Ainda não feito.
+- **Item novo → ClickUp** (direção contrária): ao cadastrar um item novo direto aqui no sistema
+  (aba Estoque ou Cadastro Rápido), chamar a API do ClickUp para criar a task correspondente na
+  lista de patrimônio. Ainda não feito — hoje a sincronização só funciona no sentido
+  ClickUp → sistema (ver seção acima).

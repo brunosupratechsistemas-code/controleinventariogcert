@@ -60,6 +60,12 @@ create table if not exists itens (
   updated_at timestamptz not null default now()
 );
 
+-- Preenchido só nos itens que vieram da integração com o ClickUp (ver
+-- CLICKUP_SYNC_ETIQUETAS.md) — é a "chave" que a sincronização usa para saber
+-- se já existe um item aqui para aquela task do ClickUp, e assim atualizar em
+-- vez de duplicar. Itens cadastrados direto no sistema ficam com isso vazio.
+alter table itens add column if not exists clickup_task_id text unique;
+
 create index if not exists itens_categoria_idx on itens(categoria_id);
 create index if not exists itens_colaborador_idx on itens(colaborador_id);
 
